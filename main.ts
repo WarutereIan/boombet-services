@@ -6,6 +6,9 @@ import { storeCacheValues } from "./config/cacheValues";
 import { checkDailyEventsCron } from "./cronJobs/checkDailyEvents";
 import { checkWeeklyEventsCron } from "./cronJobs/checkWeeklyEvents";
 import { checkWeeklyEvents } from "./services/getWeeklyEvents";
+import { deleteOldMatches } from "./utils/deleteOldMatches";
+
+import { updateMatchesInCacheCron } from "./cronJobs/updateMatchesInCache";
 
 let db: any;
 
@@ -19,4 +22,6 @@ checkWeeklyEvents();
 checkWeeklyEventsCron.start();
 checkDailyEventsCron.start();
 checkLiveEventsCron.start();
+updateMatchesInCacheCron.start()
 
+deleteOldMatches().then()

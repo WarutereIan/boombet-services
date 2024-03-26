@@ -140,6 +140,9 @@ export const checkLiveEvents = async () => {
       })
     );
 
+    
+   
+
     await Publisher.send(
       {
         exchange: "live",

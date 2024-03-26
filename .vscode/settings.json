@@ -1,0 +1,8 @@
+{
+    "files.autoSave": "afterDelay",
+    "editor.fontSize": 14,
+    "window.zoomLevel": -0.8,
+    "editor.accessibilityPageSize": 10,
+    "editor.formatOnPaste": false,
+    "editor.formatOnSave": false
+}
