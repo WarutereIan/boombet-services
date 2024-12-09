@@ -2,7 +2,7 @@ import { CronJob } from "cron";
 
 
 
-import { checkWeeklyEvents } from "../services/getWeeklyEvents";
+import { checkWeeklyEvents } from "../services/firestore/getWeeklyEvents.firestore";
 
 export const checkWeeklyEventsCron = new CronJob(`0 0/15 1/5 * *`, async () => {
   console.log("checkWeeklyEventsCron running");

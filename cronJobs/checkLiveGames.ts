@@ -1,5 +1,5 @@
 import { CronJob } from "cron";
-import { checkLiveEvents } from "../services/getLiveEvents";
+import { checkLiveEvents } from "../services/firestore/getLiveEvents.firestore";
 
 export const checkLiveEventsCron = new CronJob("0/1 * * * *", async () => {
   try {

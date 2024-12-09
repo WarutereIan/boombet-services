@@ -1,10 +1,6 @@
 import { CronJob } from "cron";
 import { updateMatchesInCache } from "../services/updateMatchesInCache";
 
-
-
-
-
 export const updateMatchesInCacheCron = new CronJob("0/1 * * * *", async () => {
 
     try {

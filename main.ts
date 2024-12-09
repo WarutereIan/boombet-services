@@ -9,6 +9,7 @@ import { checkWeeklyEvents } from "./services/getWeeklyEvents";
 import { deleteOldMatches } from "./utils/deleteOldMatches";
 
 import { updateMatchesInCacheCron } from "./cronJobs/updateMatchesInCache";
+import { sub } from "./utils/subToMatch";
 
 let db: any;
 
@@ -16,12 +17,12 @@ let db: any;
   db = connectDB().then();
 })();
 
-
+/* 
 checkDailyEvents();
-checkWeeklyEvents();
+checkWeeklyEvents(); */
 checkWeeklyEventsCron.start();
 checkDailyEventsCron.start();
 checkLiveEventsCron.start();
 updateMatchesInCacheCron.start()
 
-deleteOldMatches().then()
+deleteOldMatches().then() 

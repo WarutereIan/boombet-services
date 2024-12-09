@@ -1,9 +1,9 @@
 import axios from "axios";
-import { Event } from "../models/Event";
-import { connectDB } from "../config/db";
-import { config } from "../config/config";
+[];
 import { response } from "express";
-import { sleep } from "../utils/sleepFunction";
+import { config } from "../../config/config";
+import { sleep } from "../../utils/sleepFunction";
+import { firestoreDb } from "../../config/firestore";
 
 const date = new Date();
 
@@ -40,6 +40,7 @@ export const checkWeeklyEvents = async () => {
       url: `https://sportscore1.p.rapidapi.com/sports/1/events/date/${dateToday}`,
       headers: {
         "X-RapidAPI-Key": config.RAPID_API_KEY,
+
         "X-RapidAPI-Host": "sportscore1.p.rapidapi.com",
       },
     };
@@ -49,12 +50,21 @@ export const checkWeeklyEvents = async () => {
 
       let events: any = res.data.data;
 
+      const EventsRef = firestoreDb.collection("Events");
+
       for (const event of events) {
         for (let i = 0; i < 2; i++) {
           await sleep(i * 1000);
         }
 
-        let _event;
+        let eventRef = EventsRef.doc(`${event.id}`);
+
+        const doc = await eventRef.get();
+
+        if (doc.exists) {
+          console.log("doc exists");
+          continue;
+        }
 
         let start_at: any = event.start_at;
 
@@ -62,25 +72,24 @@ export const checkWeeklyEvents = async () => {
 
         event.date = date;
 
-        if (event.sport_id == 1 && !(await Event.exists({ id: event.id }))) {
-          _event = await Event.create(event);
-
-          let _lineups: [] = [];
-
-          let _markets: [] = [];
-
+        if (event.sport_id == 1) {
           getEventLineups(event.id).then((lineups) => {
-            _lineups = lineups;
-            getEventmarkets(event.id).then((markets) => {
-              _markets = markets;
+            getEventmarkets(event.id).then(async (markets) => {
+              //create doc
+              await eventRef.set({
+                ...event,
+                markets: markets == undefined || !markets ? null : markets,
+                lineups: lineups == undefined || !lineups ? null : lineups,
+                live: false,
+                prediction_changed: false,
+                admin_prediction: null,
+                ai_prediction: null,
+                expires_at: getDocTTL()
+              });
             });
           });
 
-          _event.markets = _markets;
-
-          _event.lineups = _lineups;
-
-          await _event.save();
+          console.log("created event", eventRef.id);
         }
       }
 
@@ -93,12 +102,13 @@ export const checkWeeklyEvents = async () => {
 
 const getEventmarkets = async (eventId: string) => {
   try {
-    //console.log("axios request - getEventMarkets");
+    console.log("axios request - getEventMarkets");
     const options = {
       method: "GET",
       url: `https://sportscore1.p.rapidapi.com/events/${eventId}/markets`,
       headers: {
         "X-RapidAPI-Key": config.RAPID_API_KEY,
+
         "X-RapidAPI-Host": "sportscore1.p.rapidapi.com",
       },
     };
@@ -109,6 +119,10 @@ const getEventmarkets = async (eventId: string) => {
 
     const markets = response.data.data;
 
+    if (!markets || markets == undefined) {
+      return null;
+    }
+
     return markets;
   } catch (error) {
     console.error(error);
@@ -117,12 +131,13 @@ const getEventmarkets = async (eventId: string) => {
 
 const getEventLineups = async (eventId: string) => {
   try {
-    //console.log("axios request -getEventLineups");
+    console.log("axios request -getEventLineups");
     const options = {
       method: "GET",
       url: `https://sportscore1.p.rapidapi.com/events/${eventId}/lineups`,
       headers: {
         "X-RapidAPI-Key": config.RAPID_API_KEY,
+
         "X-RapidAPI-Host": "sportscore1.p.rapidapi.com",
       },
     };
@@ -133,8 +148,19 @@ const getEventLineups = async (eventId: string) => {
 
     const lineups = response.data.data;
 
+    if (!lineups || lineups == undefined) {
+      return null;
+    }
     return lineups;
   } catch (error) {
     console.error(error);
   }
 };
+
+const getDocTTL = () => {
+  const today = new Date();
+  const oneWeekFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+return oneWeekFromNow
+}
+
+checkWeeklyEvents().then();

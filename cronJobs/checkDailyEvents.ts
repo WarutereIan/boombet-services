@@ -1,7 +1,7 @@
 import { CronJob } from "cron";
 
 
-import { checkDailyEvents } from "../services/getDailyEvents";
+import { checkDailyEvents } from "../services/firestore/getDailyEvents.firestore";
 
 export const checkDailyEventsCron = new CronJob("1 0/3 * * *", async () => {
   console.log("checkDailyEventsCron running");
