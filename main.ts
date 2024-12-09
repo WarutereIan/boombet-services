@@ -1,6 +1,6 @@
 import { connectDB } from "./config/db";
 import { config } from "./config/config";
-import { checkLiveEventsCron } from "./cronJobs/checkLiveGames";
+import { checkLiveEventsCron, } from "./cronJobs/checkLiveGames";
 import { checkDailyEvents } from "./services/getDailyEvents";
 import { storeCacheValues } from "./config/cacheValues";
 import { checkDailyEventsCron } from "./cronJobs/checkDailyEvents";
@@ -11,6 +11,7 @@ import { deleteOldMatches } from "./utils/deleteOldMatches";
 import { updateMatchesInCacheCron } from "./cronJobs/updateMatchesInCache";
 import { sub } from "./utils/subToMatch";
 
+
 let db: any;
 
 (async () => {
@@ -20,9 +21,9 @@ let db: any;
 /* 
 checkDailyEvents();
 checkWeeklyEvents(); */
-checkWeeklyEventsCron.start();
-checkDailyEventsCron.start();
-checkLiveEventsCron.start();
-updateMatchesInCacheCron.start()
+checkWeeklyEventsCron
+checkDailyEventsCron
+checkLiveEventsCron
+//updateMatchesInCacheCron.start()
 
 deleteOldMatches().then() 

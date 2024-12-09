@@ -1,10 +1,8 @@
-import { CronJob } from "cron";
 
-
-
+import {Cron} from "croner"
 import { checkWeeklyEvents } from "../services/firestore/getWeeklyEvents.firestore";
 
-export const checkWeeklyEventsCron = new CronJob(`0 0/15 1/5 * *`, async () => {
+export const checkWeeklyEventsCron = new Cron(`0 0/15 1/5 * *`, async () => {
   console.log("checkWeeklyEventsCron running");
   await checkWeeklyEvents();
 });
